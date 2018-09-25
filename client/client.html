@@ -7,6 +7,131 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
 
+
+    //handles the response
+    const handleResponse = (xhr) => {
+      //get content section
+      const content = document.querySelector('#content');
+      //create elements
+      const h1 = document.createElement('h1');
+      const p = document.createElement('p');
+      //check the xhr status code and handle accordingly
+      switch(xhr.status) {
+        case 200:
+          h1.innerHTML = `<b>Success</b>`;
+          break;
+        case 201:
+          h1.innerHTML = `<b>Created Successfully<b>`;
+          break;
+        case 204:
+          h1.innerHTML = `<b>Updated</b>`;
+          break;
+        case 400:
+          h1.innerHTML = `<b>Bad Request</b>`;
+          break;
+        case 404:
+          h1.innerHTML = `<b>Resource Not Found</b>`;
+          break;
+        default:
+          h1.innerHTML = `Error code not implemented by client.`;
+          break;
+      }          
+			//check if object should be parsed
+			if(xhr.response){
+				const obj = JSON.parse(xhr.response);
+				console.dir(obj);
+        //check if there is a message to display
+        if(obj.message){
+          p.innerHTML = `Message: ${obj.message}`;
+        }
+        //check if users exists
+        else if(obj.users){
+          p.innerHTML = JSON.stringify(obj.users);;
+        }
+			}
+      //clear content section
+      content.innerHTML = "";
+      //append elements to content section
+      content.appendChild(h1);
+      content.appendChild(p);
+    };
+
+
+    //function to send our post request
+    const sendPost = (e, nameForm) => {
+      //grab the forms action (url to go to)
+      //and method (HTTP method - POST in this case)
+      const nameAction = nameForm.getAttribute('action');
+      const nameMethod = nameForm.getAttribute('method');
+      
+      //grab the form's name and age fields so we can check user input
+      const nameField = nameForm.querySelector('#nameField');
+      const ageField = nameForm.querySelector('#ageField');
+      
+      //create a new Ajax request 
+      const xhr = new XMLHttpRequest();
+      //set the method (POST) and url (action field from form)
+      xhr.open(nameMethod, nameAction);
+      
+      //set our request type to x-www-form-urlencoded
+      xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      //set our requested response type in hopes of a JSON response
+      xhr.setRequestHeader ('Accept', 'application/json');
+      
+      //set our function to handle the response
+      xhr.onload = () => handleResponse(xhr);
+      
+      //set formData to input fields
+      const formData = `name=${nameField.value}&age=${ageField.value}`;
+      
+      //send our request with the data
+      xhr.send(formData);
+      //prevent the browser's default action (to send the form on its own)
+      e.preventDefault();
+      //return false to prevent the browser from trying to change page
+      return false;
+    };
+
+
+    //used for GET and HEAD requests
+    const requestUpdate = (e, userForm) => {
+      const url = userForm.querySelector('#urlField').value;
+      const method = userForm.querySelector('#methodSelect').value;
+
+      //create new XMLHttpRequest
+			const xhr = new XMLHttpRequest();
+			xhr.open(method, url);
+			xhr.setRequestHeader('Accept', 'application/json');
+			
+      //handle the response
+			xhr.onload = () => handleResponse(xhr);
+			
+			xhr.send();
+			
+      //prevent page from changing
+			e.preventDefault();
+			return false;
+    };
+
+
+    //initialize
+    const init = () => {
+      //grab forms
+      const nameForm = document.querySelector('#nameForm');
+      const userForm = document.querySelector('#userForm');
+      
+      //create handlers
+      const addUser = (e) => sendPost(e, nameForm);
+      const getUsers = (e) => requestUpdate(e, userForm);
+      
+      //attach submit events
+      nameForm.addEventListener('submit', addUser);
+      userForm.addEventListener('submit', getUsers);     
+    };
+
+    //load init
+    window.onload = init;
+
   </script>
 </head>
 <body>

@@ -1,0 +1,30 @@
+{
+  "name": "http-api-assignment-ii",
+  "version": "1.0.0",
+  "description": "",
+  "engines": {
+    "node": "9.10.0",
+    "npm": "5.3.0"
+  },
+  "main": "./src/server.js",
+  "scripts": {
+    "start": "node ./src/server.js",
+    "pretest": "eslint ./src --fix",
+    "test": "echo \"Test complete\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nch8501/http-api-assignment-ii.git"
+  },
+  "author": "Nick Henderson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nch8501/http-api-assignment-ii/issues"
+  },
+  "homepage": "https://github.com/nch8501/http-api-assignment-ii#readme",
+  "devDependencies": {
+    "eslint": "^5.6.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.14.0"
+  }
+}
